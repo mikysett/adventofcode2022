@@ -1,7 +1,7 @@
 use std::fs;
 
 struct Forest {
-    pub threes: Vec<Vec<(u32, usize)>>,
+    pub threes: Vec<Vec<u32>>,
     pub size: Point,
 }
 
@@ -16,19 +16,18 @@ fn main() {
             .lines()
             .map(|s| {
                 s.chars()
-                    .map(|c| (c.to_digit(10).unwrap(), 0))
-                    .collect::<Vec<(u32, usize)>>()
+                    .map(|c| (c.to_digit(10).unwrap()))
+                    .collect::<Vec<u32>>()
             })
-            .collect::<Vec<Vec<(u32, usize)>>>(),
-            size: Point(0, 0),
-        };
+            .collect::<Vec<Vec<u32>>>(),
+        size: Point(0, 0),
+    };
     forest.size = Point(forest.threes.first().unwrap().len(), forest.threes.len());
 
     let mut most_views = 0;
     for row in 1..forest.size.0 - 1 {
         for col in 1..forest.size.1 - 1 {
             let curr_views = calculate_views(&forest, Point(row, col));
-            forest.threes[row][col].1 = curr_views;
             if curr_views > most_views {
                 most_views = curr_views;
             }
@@ -38,36 +37,36 @@ fn main() {
 }
 
 fn calculate_views(forest: &Forest, pos: Point) -> usize {
-    let three_hight = forest.threes[pos.0][pos.1].0;
+    let directions = vec![Step(-1, 0), Step(0, -1), Step(1, 0), Step(0, 1)];
+    let three_hight = forest.threes[pos.0][pos.1];
 
-    count_visible(forest, three_hight, &pos, Step(-1, 0))
-        * count_visible(forest, three_hight, &pos, Step(0, -1))
-        * count_visible(forest, three_hight, &pos, Step(1, 0))
-        * count_visible(forest, three_hight, &pos, Step(0, 1))
+    directions.iter().fold(1, |nb_visible, direction| {
+        nb_visible * count_visible(forest, three_hight, &pos, direction)
+    })
 }
 
-fn count_visible(forest: &Forest, highest: u32, pos: &Point, step: Step) -> usize {
-    // If next threes will be out of the array
-    if (pos.0 == 0 && step.0 == -1)
-    || (pos.0 == forest.size.0 - 1)
-    || (pos.1 == 0 && step.1 == -1)
-    || (pos.1 == forest.size.1 - 1) {
-        return 0;
-    }
+fn count_visible(forest: &Forest, highest: u32, pos: &Point, step: &Step) -> usize {
+    let mut nb_visible = 0;
+    let mut pos = Point(pos.0, pos.1);
+    while (pos.0 != 0 || step.0 != -1)
+        && (pos.0 != forest.size.0 - 1)
+        && (pos.1 != 0 || step.1 != -1)
+        && (pos.1 != forest.size.1 - 1)
+    {
+        if step.0 == -1 {
+            pos = Point(pos.0 - 1, pos.1);
+        } else if step.1 == -1 {
+            pos = Point(pos.0, pos.1 - 1);
+        } else {
+            pos = Point(pos.0 + step.0 as usize, pos.1 + step.1 as usize);
+        }
 
-    let new_pos;
-    if step.0 == -1 {
-        new_pos = Point(pos.0 - 1, pos.1);
-    } else if step.1 == -1 {
-        new_pos = Point(pos.0, pos.1 - 1);
-    } else {
-        new_pos = Point(pos.0 + step.0 as usize, pos.1 + step.1 as usize);
-    }
+        let curr_three = forest.threes[pos.0][pos.1];
+        if curr_three >= highest {
+            return nb_visible + 1;
+        }
 
-    let curr_three = forest.threes[new_pos.0][new_pos.1];
-    if curr_three.0 >= highest {
-        return 1;
+        nb_visible += 1;
     }
-
-    return count_visible(forest, highest, &new_pos, step) + 1;
+    nb_visible
 }
