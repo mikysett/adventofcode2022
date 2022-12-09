@@ -41,31 +41,11 @@ fn main() {
 }
 
 fn new_tail_position(t_pos: &Pos, h_pos: &Pos) -> Pos {
-    let mut t_pos = Pos(t_pos.0, t_pos.1);
-
-    if t_pos.0 == h_pos.0 {
-        if t_pos.1 > h_pos.1 + 1 {
-            t_pos.1 -= 1;
-        } else if t_pos.1 < h_pos.1 - 1 {
-            t_pos.1 += 1;
-        }
-    } else if t_pos.1 == h_pos.1 {
-        if t_pos.0 > h_pos.0 + 1 {
-            t_pos.0 -= 1;
-        } else if t_pos.0 < h_pos.0 - 1 {
-            t_pos.0 += 1;
-        }
-    } else if (t_pos.0 - h_pos.0).abs() + (t_pos.1 - h_pos.1).abs() > 2 {
-        if t_pos.1 > h_pos.1 {
-            t_pos.1 -= 1;
-        } else if t_pos.1 < h_pos.1 {
-            t_pos.1 += 1;
-        }
-        if t_pos.0 > h_pos.0 {
-            t_pos.0 -= 1;
-        } else if t_pos.0 < h_pos.0 {
-            t_pos.0 += 1;
-        }
+    let distance = Pos(h_pos.0 - t_pos.0, h_pos.1 - t_pos.1);
+    let mut new_pos = Pos(t_pos.0, t_pos.1);
+    if (distance.0).abs() > 1 || (distance.1).abs() > 1 {
+        new_pos.0 += distance.0.signum();
+        new_pos.1 += distance.1.signum();
     }
-    t_pos
+    new_pos
 }
