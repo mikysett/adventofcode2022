@@ -1,3 +1,4 @@
+// find repeated char from half a string into another
 use std::fs;
 
 fn main() {

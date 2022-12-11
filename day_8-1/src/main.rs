@@ -1,3 +1,4 @@
+// skyline problem, counting visible threes
 use colored::Colorize;
 use std::fmt;
 use std::fs;

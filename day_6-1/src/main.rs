@@ -1,3 +1,4 @@
+// Parsing string, find markers, first substring end position
 use std::fs;
 use std::process::exit;
 

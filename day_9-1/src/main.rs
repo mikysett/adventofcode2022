@@ -1,3 +1,4 @@
+// rope dynamics, snake moves
 use std::fs;
 
 #[derive(Debug, PartialEq, Eq, Clone, Copy, PartialOrd, Ord)]
