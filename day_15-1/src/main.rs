@@ -41,7 +41,7 @@ impl Signal {
         (s.x - b.x).abs() + (s.y - b.y).abs()
     }
 
-    fn is_in_range(&self, point: &Pos) -> bool {
+    fn for_sure_not_beacon(&self, point: &Pos) -> bool {
         if self.beacon == *point {
             false
         } else {
@@ -64,7 +64,7 @@ fn main() {
     for row in 2000000..2000000 + 1 {
         for col in edges.l..edges.r + 1 {
             for sig in &signals {
-                if sig.is_in_range(&Pos::new(col, row)) {
+                if sig.for_sure_not_beacon(&Pos::new(col, row)) {
                     not_beacons.insert(Pos::new(col, row));
                     break;
                 }
