@@ -27,9 +27,9 @@ fn main() {
         .lines()
         .flat_map(|line| get_shape(&get_points(line)))
         .collect::<HashSet<Pos>>();
-    
+
     let edges = get_edges(&walls);
-    
+
     let mut sand = Pos::new(500, 0);
     let mut sand_travel: Vec<Pos> = vec![sand];
     let mut sand_count = 0;
@@ -89,8 +89,13 @@ fn get_shape(points: &Vec<Pos>) -> Vec<Pos> {
 }
 
 fn get_edges(walls: &HashSet<Pos>) -> Edges {
-    walls.iter()
-        .fold(Edges { l: usize::MAX, r: 0, b: 0 }, |edges: Edges, wall| {
+    walls.iter().fold(
+        Edges {
+            l: usize::MAX,
+            r: 0,
+            b: 0,
+        },
+        |edges: Edges, wall| {
             let mut new_edges = edges;
 
             if wall.x < new_edges.l {
@@ -103,7 +108,8 @@ fn get_edges(walls: &HashSet<Pos>) -> Edges {
                 new_edges.b = wall.y;
             }
             new_edges
-        })
+        },
+    )
 }
 
 fn get_step(start: &Pos, end: &Pos) -> Box<dyn Fn(&Pos) -> Pos> {
@@ -124,7 +130,6 @@ fn print_map(walls: &HashSet<Pos>, edges: &Edges) {
     let col_count = edges.r - edges.l + 1;
     let row_count = edges.b + 3;
     let mut map: Vec<Vec<char>> = vec![vec!['.'; col_count]; row_count];
-
 
     for wall in walls {
         if edges.l <= wall.x && edges.r >= wall.x {
