@@ -32,24 +32,20 @@ fn main() {
     let mut sand = Pos::new(500, 0);
     let mut sand_travel: Vec<Pos> = vec![sand];
     let mut sand_count = 0;
-    while !walls.contains(&Pos::new(500, 0)) {
+    'next_sand: while !walls.contains(&Pos::new(500, 0)) {
         if sand.y == edges.b + 1 {
             walls.insert(sand);
             sand_count += 1;
             sand = sand_travel.pop().unwrap();
-        }
-        else if !walls.contains(&Pos::new(sand.x, sand.y + 1)) {
-            sand_travel.push(sand);
-            sand.y += 1;
-        } else if !walls.contains(&Pos::new(sand.x - 1, sand.y + 1)) {
-            sand_travel.push(sand);
-            sand.x -= 1;
-            sand.y += 1;
-        } else if !walls.contains(&Pos::new(sand.x + 1, sand.y + 1)) {
-            sand_travel.push(sand);
-            sand.x += 1;
-            sand.y += 1;
         } else {
+            for x in [sand.x, sand.x - 1, sand.x + 1] {
+                if !walls.contains(&Pos::new(x, sand.y + 1)) {
+                    sand_travel.push(sand);
+                    sand.x = x;
+                    sand.y += 1;
+                    continue 'next_sand;
+                }
+            }
             walls.insert(sand);
             sand_count += 1;
             sand = sand_travel.pop().unwrap();
