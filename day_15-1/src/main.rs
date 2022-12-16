@@ -66,6 +66,7 @@ fn main() {
             for sig in &signals {
                 if sig.is_in_range(&Pos::new(col, row)) {
                     not_beacons.insert(Pos::new(col, row));
+                    break;
                 }
             }
         }
